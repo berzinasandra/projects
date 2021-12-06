@@ -26,14 +26,12 @@ def create_vis(data:list):
             )
         )
 
-
         count +=1
 
 
         args = [False] *  len(df.columns)
         args[i] = True
 
-        # import pdb;pdb.set_trace()  
         button = {
             "label": column,
             "method": "update",
@@ -45,7 +43,6 @@ def create_vis(data:list):
         buttons.append(button)
 
         i+=1
-
 
     fig.update_layout(
         updatemenus=[
