@@ -14,7 +14,7 @@ def create_vis(data:list):
     i = 0
 
     colors = ["firebrick", "steelblue"]
-
+    # TODO: remove 'trace 0' when hover over bars
     count = 0
     for column in df:
         fig.add_trace(
