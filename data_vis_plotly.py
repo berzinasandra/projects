@@ -1,5 +1,4 @@
 import plotly.graph_objects as go
-import plotly.express as px
 import pandas as pd
 import matplotlib
 import random
@@ -11,7 +10,10 @@ def create_vis(data:list):
     df = pd.DataFrame.from_dict(data)
     df.set_index("City", inplace=True)
 
-   
+    if 'Whole_country' in df.index:
+        df.drop('Whole_country', inplace=True)
+    
+    
     fig = go.Figure()
     buttons = []
     i = 0
@@ -19,7 +21,6 @@ def create_vis(data:list):
     colors = _get_colors(len(df))
     # TODO: 
     # remove 'trace 0' when hover over bars
-    # remove Whole country from df
     count = 0
     for column in df:
         fig.add_trace(
