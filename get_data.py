@@ -16,8 +16,8 @@ class GetData:
         if not url:
             print('Nop')
             logging.info("Could not get url for newest data table")
-            # return
-        # data = self._pick_data_of_cities(url)
+            return
+        data = self._pick_data_of_cities(url)
         
         data = [{'City': 'Espoo', 'published_at': '2021-09-01', 'Number of establishments': 14, 'Number of bedrooms': 1503, 'Occupancy rate of bedrooms, %': 45.9, 'Change compared to previous year, %-units': 8.7, 'Room price, euros (incl. VAT 10 %)': '75.84', 'RevPAR, euros (incl. VAT 10 %)': '34.78'}]
         self._store_data_in_db(data)
