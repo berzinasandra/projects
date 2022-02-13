@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 import numpy as np
 import pdb
 
@@ -8,6 +7,7 @@ class LinkedinConnections:
     def display_visualisation(self):
         connections_df = self._create_df()
         count_of_connections_df = self._create_connection_count_df(connections_df)
+        
         self._create_visualisation_for_whole_period(count_of_connections_df)
         self._create_visualisation_per_year(count_of_connections_df)
 
@@ -20,21 +20,19 @@ class LinkedinConnections:
 
     def _create_connection_count_df(self, connections_df):
         base_df = self._create_base_count_of_connections_df(connections_df)
-        
         whole_time_period_df = self._create_whole_time_period_df(connections_df)
         
         connection_count_df = pd.concat([base_df, whole_time_period_df]).drop_duplicates("Connected On") 
-        connection_count_df.sort_values('Connected On', ascending=True, inplace=True)
-        connection_count_df.reset_index(inplace=True)
-        connection_count_df.drop(["index"], 1)
-        connection_count_df['Count of connections'].fillna(0, inplace=True)
         
+        connection_count_df.set_index(connection_count_df["Connected On"], inplace=True)
+        connection_count_df.drop("Connected On", axis=1, inplace=True)
+        connection_count_df.sort_index(ascending=True, inplace=True)       
+        connection_count_df['Count of connections'].fillna(0, inplace=True)
+        connection_count_df['Count of connections'] = connection_count_df['Count of connections'].astype(int)
+
         return connection_count_df
 
     def _create_base_count_of_connections_df(self, connections_df):
-        # the same --> connections_df.groupby(['Connected On']).size() == connections_df['Connected On'].value_counts()
-        
-        
         count_of_connections = connections_df.groupby(['Connected On']).size()
         count_of_connections_df = pd.DataFrame(count_of_connections, columns=['Count of connections'])
         count_of_connections_df.reset_index(inplace=True)
@@ -51,20 +49,24 @@ class LinkedinConnections:
 
 
     def _create_visualisation_for_whole_period(self,count_of_connections_df):
-        connections_per_year_df = count_of_connections_df.groupby(count_of_connections_df["Connected On"].dt.year)["Count of connections"].agg(['sum'])
-        plt.plot(connections_per_year_df.index, connections_per_year_df["sum"]) # line 
+        connections_per_year=count_of_connections_df.groupby([(count_of_connections_df.index.year)]).sum()
+
+        plt.plot(connections_per_year.index, connections_per_year["Count of connections"]) # line 
         plt.ylabel('Count of connections', fontsize=9)
         y_ticks = np.arange(0, 30, 5)
         plt.yticks(y_ticks)
         plt.gcf().autofmt_xdate()
         plt.xlabel('Connected On', fontsize=9, )
         
-        plt.title(f'Amount of connected people in time perdiod of {count_of_connections_df["Connected On"].min()} - {count_of_connections_df["Connected On"].max()}', fontsize=11)
+        start = str(count_of_connections_df.index.min()).replace(' 00:00:00', '')
+        end = str(count_of_connections_df.index.max()).replace(' 00:00:00', '')
+        plt.title(f'Amount of connected people in time perdiod of {start} - {end}', fontsize=11)
         
         plt.show()
 
     def _create_visualisation_per_year(self, count_of_connections_df):
-        pdb.set_trace()
+        year_2016 = count_of_connections_df[:'2017-01-01']
+        # parse for each year
 
        
 
