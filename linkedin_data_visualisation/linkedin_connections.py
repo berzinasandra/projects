@@ -8,12 +8,12 @@ class LinkedinConnections:
     def display_visualisation(self):
         connections_df = self._create_df()
         count_of_connections_df = self._create_connection_count_df(connections_df)
-        self._create_visualisation(count_of_connections_df)
+        self._create_visualisation_for_whole_period(count_of_connections_df)
+        self._create_visualisation_per_year(count_of_connections_df)
 
 
     def _create_df(self):
         connections_df = pd.read_csv('linkedin_data_visualisation\linkedin_data\Connections.csv',  sep=',')
-        # connections_df.sort_values(by=['Email Address'])
         connections_df['Connected On'] = pd.to_datetime(connections_df['Connected On'])
         connections_df = connections_df.sort_values('Connected On', ascending=True)
         return connections_df
@@ -50,29 +50,23 @@ class LinkedinConnections:
         return whole_time_period_df
 
 
-    def _create_visualisation(self,count_of_connections_df):
-        # connections per year
-        connections_per_year_df = pd.DataFrame(count_of_connections_df.groupby(count_of_connections_df["Connected On"].dt.year)["Count of connections"].agg(['sum']))
-        # pdb.set_trace()
-        # create plot
+    def _create_visualisation_for_whole_period(self,count_of_connections_df):
+        connections_per_year_df = count_of_connections_df.groupby(count_of_connections_df["Connected On"].dt.year)["Count of connections"].agg(['sum'])
         plt.plot(connections_per_year_df.index, connections_per_year_df["sum"]) # line 
-        # count_of_connections_df["Count of connections"].plot(kind='bar')
         plt.ylabel('Count of connections', fontsize=9)
         y_ticks = np.arange(0, 30, 5)
         plt.yticks(y_ticks)
         plt.gcf().autofmt_xdate()
-        # plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=60))
         plt.xlabel('Connected On', fontsize=9, )
         
         plt.title(f'Amount of connected people in time perdiod of {count_of_connections_df["Connected On"].min()} - {count_of_connections_df["Connected On"].max()}', fontsize=11)
         
         plt.show()
 
-      
-       
+    def _create_visualisation_per_year(self, count_of_connections_df):
+        pdb.set_trace()
 
-# count_of_connections_df["Count of connections"].plot(kind='bar') --> bar chart
-# count_of_connections_df.plot.scatter(x='Connected On', y='Count of connections')
+       
 
 
 if __name__ == "__main__":
