@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import pdb
+import matplotlib.dates as mdates
 
 class LinkedinConnections:    
     def display_visualisation(self):
@@ -62,13 +63,27 @@ class LinkedinConnections:
         end = str(count_of_connections_df.index.max()).replace(' 00:00:00', '')
         plt.title(f'Amount of connected people in time perdiod of {start} - {end}', fontsize=11)
         
-        plt.show()
-
     def _create_visualisation_per_year(self, count_of_connections_df):
-        year_2016 = count_of_connections_df[:'2017-01-01']
-        # parse for each year
+        df_per_year = {"2016": count_of_connections_df['2016-01-01':'2016-12-31'] , "2017": count_of_connections_df['2017-01-01':'2017-12-31'], "2018": count_of_connections_df['2018-01-01':'2018-12-31'], "2019" :count_of_connections_df['2019-01-01':'2019-12-31'], "2020": count_of_connections_df['2020-01-01':'2020-12-31'], "2021": count_of_connections_df['2021-01-01':'2021-12-31']}
 
-       
+        fig, ((ax1, ax2), (ax3,ax4), (ax5, ax6)) = plt.subplots(3,2)
+        
+        plots = [ax1, ax2, ax3, ax4, ax5, ax6]
+        count_ = 0
+        for year, frame in df_per_year.items():
+            plots[count_].plot(frame.index, frame['Count of connections'])
+            plots[count_].set_ylim([0,4])
+            plots[count_].xaxis.set_major_locator(mdates.MonthLocator())
+            plots[count_].xaxis.set_major_formatter(mdates.DateFormatter('%b'))
+            months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            plots[count_].autofmt_xdate()
+            plots[count_].set_xticklabels(months, rotation=45)
+            plots[count_].set_title(f'Amount of connected people in year {year}', fontsize=6)
+            count_ += 1
+        
+        fig.tight_layout(pad=2.0)
+
+        plt.show() 
 
 
 if __name__ == "__main__":
